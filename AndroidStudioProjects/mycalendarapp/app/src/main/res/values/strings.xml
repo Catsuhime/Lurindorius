@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Lurindorius</string>
+    <string-array name="colors_array">
+        <item>Red</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+        <item>Teal</item>
+    </string-array>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "929862707856",
+    "project_id": "lurindorius-df1a4",
+    "storage_bucket": "lurindorius-df1a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929862707856:android:50cd4101ef3a70a6160615",
+        "android_client_info": {
+          "package_name": "com.example.mycalendarapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_wPeJDiSBQnWqnGCHe_BOdPGAGGFZnKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
