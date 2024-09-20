@@ -1,6 +1,7 @@
 package com.example.mycalendarapp
 //NotesListActivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
@@ -25,6 +26,7 @@ class NotesListActivity : AppCompatActivity() {
     private lateinit var notesAdapter: NoteAdapter
     private lateinit var db: FirebaseFirestore
 
+
     // Extension function to convert java.util.Date to org.threeten.bp.LocalDate
     fun Date.toLocalDate(): LocalDate {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneId.systemDefault()).toLocalDate()
@@ -33,7 +35,7 @@ class NotesListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidThreeTen.init(this)
-        setContentView(R.layout.activity_notes_list)  // Ensure this matches your XML layout file name
+        setContentView(R.layout.activity_notes_list)
 
         // Reference the views by their IDs defined in the XML layout
         dateTextView = findViewById(R.id.dateTextView)
@@ -71,9 +73,10 @@ class NotesListActivity : AppCompatActivity() {
 
             // Wait for all tasks to complete before setting up the adapter
             tasks.last().addOnCompleteListener {
-                notesAdapter = NoteAdapter(notes) { note ->
+                notesAdapter = NoteAdapter(notes, onDelete = { note ->
                     deleteNote(note)
-                }
+                }, onEdit = { note -> editNote(note) // Implement your note editing logic here
+                })
                 notesRecyclerView.adapter = notesAdapter
             }
         }.addOnFailureListener { e ->
@@ -102,4 +105,16 @@ class NotesListActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to delete note", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun editNote(note: Note) {
+        val intent = Intent(this, AddNoteActivity::class.java).apply {
+            putExtra("noteId", note.id)
+            putExtra("title", note.title)
+            putExtra("description", note.description)
+            putExtra("color", note.color)
+            putExtra("date", note.date.date.toString())  // Pass the date as a string
+        }
+        startActivityForResult(intent, 2)  // Use requestCode 2 for editing notes
+    }
+
 }

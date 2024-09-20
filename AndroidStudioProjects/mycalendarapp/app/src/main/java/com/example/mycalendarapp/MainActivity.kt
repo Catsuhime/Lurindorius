@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,9 +26,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addNoteButton: Button
     private lateinit var notesRecyclerView: RecyclerView
     private val notes = mutableListOf<Note>()
-    private val notesAdapter = NoteAdapter(notes, ::deleteNote) // Pass the deleteNote function to the adapter
+    private val notesAdapter = NoteAdapter(notes, ::deleteNote, ::editNote)
     private val noteDays = mutableMapOf<CalendarDay, ArrayList<Note>>()
     private val calendarDayDecorators = mutableSetOf<CalendarDay>()
+
+    private lateinit var addNoteLauncher: ActivityResultLauncher<Intent>
+    private lateinit var editNoteLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,18 +44,58 @@ class MainActivity : AppCompatActivity() {
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
 
-        // Load notes from Firebase Storage when app starts
         loadNotesFromFirebaseStorage()
 
-        calendarView.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected ->
+        calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
             loadNotesForDate(date)
         })
 
+        addNoteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                data?.let { handleNoteResult(it) }
+            }
+        }
+
+        editNoteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                data?.let { handleNoteResult(it) }
+            }
+        }
+
         addNoteButton.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
-            startActivityForResult(intent, 1)
+            addNoteLauncher.launch(intent)
+        }
+
+        updateCalendarWithNotes()
+    }
+
+    private fun handleNoteResult(data: Intent) {
+        val noteId = data.getStringExtra("noteId") ?: UUID.randomUUID().toString()
+        val dateString = data.getStringExtra("date") ?: return
+        val title = data.getStringExtra("title") ?: return
+        val description = data.getStringExtra("description") ?: return
+        val color = data.getIntExtra("color", R.color.black)
+
+        val date = LocalDate.parse(dateString)
+        val calendarDay = CalendarDay.from(date)
+        val note = Note(
+            id = noteId,
+            date = calendarDay,
+            title = title,
+            description = description,
+            color = color
+        )
+
+        if (notes.any { it.id == noteId }) {
+            updateEditedNoteInCalendar(note)
+        } else {
+            addNoteToCalendar(note)
         }
     }
+
 
     private fun loadNotesFromFirebaseStorage() {
         val storageRef = FirebaseStorage.getInstance().reference.child("notes")
@@ -66,13 +111,11 @@ class MainActivity : AppCompatActivity() {
                         noteDays[noteDay] = ArrayList()
                     }
                     noteDays[noteDay]?.add(note)
-                    notes.add(note)
                     calendarDayDecorators.add(noteDay)
                 }.addOnFailureListener { e ->
                     Log.e("FirebaseStorage", "Error fetching note", e)
                 }
             }
-            // Ensure all notes are processed before updating the calendar
             notesAdapter.notifyDataSetChanged()
             updateCalendarWithNotes()
         }.addOnFailureListener { e ->
@@ -91,61 +134,68 @@ class MainActivity : AppCompatActivity() {
         notesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateCalendarWithNotes() {
-        calendarView.removeDecorators()  // Clear existing decorators
-        calendarView.addDecorator(DotDecorator(calendarDayDecorators))  // Add updated decorators
-        Log.d("MainActivity", "Updated calendar with notes: $calendarDayDecorators")
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            data?.let {
-                val dateString = it.getStringExtra("date") ?: return@let
-                val title = it.getStringExtra("title") ?: ""
-                val description = it.getStringExtra("description") ?: ""
-                val color = it.getIntExtra("color", R.color.black)
-                val noteId = it.getStringExtra("noteId") ?: UUID.randomUUID().toString() // Handle note ID
-
-                val date = LocalDate.parse(dateString)
-                val note = Note(
-                    id = noteId,
-                    date = CalendarDay.from(date),
-                    title = title,
-                    description = description,
-                    color = color
-                )
-                addNoteToCalendar(note)
-            }
-        }
-    }
-
     private fun addNoteToCalendar(note: Note) {
         val date = note.date
+
+        noteDays[date]?.removeIf { it.id == note.id }
         if (!noteDays.containsKey(date)) {
             noteDays[date] = ArrayList()
         }
         noteDays[date]?.add(note)
         calendarDayDecorators.add(date)
+
+        notesAdapter.notifyItemInserted(notes.size - 1)
         updateCalendarWithNotes()
         loadNotesForDate(date)
     }
 
+    private fun updateEditedNoteInCalendar(note: Note) {
+        notes.removeIf { it.id == note.id }
+        noteDays[note.date]?.removeIf { it.id == note.id }
+
+        notes.add(note)
+        if (!noteDays.containsKey(note.date)) {
+            noteDays[note.date] = ArrayList()
+        }
+        noteDays[note.date]?.add(note)
+
+        notesAdapter.notifyDataSetChanged()
+    }
+
+    private fun updateCalendarWithNotes() {
+        calendarView.removeDecorators()
+        if (calendarDayDecorators.isNotEmpty()) {
+            calendarView.addDecorator(DotDecorator(calendarDayDecorators))
+        }
+        calendarView.invalidate()
+    }
+
+    private fun editNote(note: Note) {
+        val intent = Intent(this, AddNoteActivity::class.java).apply {
+            putExtra("noteId", note.id)
+            putExtra("title", note.title)
+            putExtra("description", note.description)
+            putExtra("color", note.color)
+            putExtra("date", note.date.date.toString())
+        }
+        editNoteLauncher.launch(intent)
+    }
+
     private fun deleteNote(note: Note) {
-        val storageRef = FirebaseStorage.getInstance().reference.child("notes/${note.id}.json") // Updated path with .json
+        val storageRef = FirebaseStorage.getInstance().reference.child("notes/${note.id}.json")
 
         storageRef.delete().addOnSuccessListener {
-            // Successfully deleted note from Firebase Storage
-            notes.remove(note)  // Remove note from the local list
-            notesAdapter.notifyDataSetChanged()  // Notify adapter to refresh the list
+            notes.remove(note)
+            notesAdapter.notifyItemRemoved(notes.indexOf(note))
+            noteDays[note.date]?.removeIf { it.id == note.id }
 
-            // Update calendar view
-            noteDays[note.date]?.remove(note)
             if (noteDays[note.date]?.isEmpty() == true) {
                 noteDays.remove(note.date)
                 calendarDayDecorators.remove(note.date)
             }
-            updateCalendarWithNotes()  // Refresh the calendar
+
+            updateCalendarWithNotes()
+            loadNotesForDate(note.date)
 
             Toast.makeText(this, "Note deleted successfully", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { e ->
@@ -153,5 +203,6 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to delete note", Toast.LENGTH_SHORT).show()
         }
     }
-
 }
+
+

@@ -37,6 +37,7 @@ class AddNoteActivity : AppCompatActivity() {
     private lateinit var saveButton: Button
     private lateinit var backButton: Button
     private lateinit var selectedDate: LocalDate
+    private lateinit var noteId: String
 
     private val REQUEST_PERMISSION_CODE = 101
 
@@ -55,6 +56,8 @@ class AddNoteActivity : AppCompatActivity() {
         selectedDate = LocalDate.now()
         updateDateButtonText()
 
+        noteId = intent.getStringExtra("noteId") ?: UUID.randomUUID().toString()
+
         // Populate the Spinner with color options
         val colorAdapter = ArrayAdapter.createFromResource(
             this,
@@ -63,6 +66,16 @@ class AddNoteActivity : AppCompatActivity() {
         )
         colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         colorSpinner.adapter = colorAdapter
+
+        if (intent.hasExtra("title")) {
+            // Populate fields with existing note data
+            titleEditText.setText(intent.getStringExtra("title"))
+            descriptionEditText.setText(intent.getStringExtra("description"))
+            val color = intent.getIntExtra("color", R.color.black)
+            selectedDate = LocalDate.parse(intent.getStringExtra("date"))
+            updateDateButtonText()
+            colorSpinner.setSelection(getSpinnerIndex(colorSpinner, color))
+        }
 
         dateButton.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -92,6 +105,7 @@ class AddNoteActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // Handle alarm setting
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.SCHEDULE_EXACT_ALARM
@@ -110,9 +124,9 @@ class AddNoteActivity : AppCompatActivity() {
                 )
             }
 
-            val noteId = UUID.randomUUID().toString() // Generate a unique ID for the note
+            // Create or update note
             val note = Note(
-                id = noteId,
+                id = noteId, // Use the existing note ID for editing
                 date = CalendarDay.from(selectedDate),
                 title = title,
                 description = description,
@@ -123,13 +137,35 @@ class AddNoteActivity : AppCompatActivity() {
         }
 
 
+
         backButton.setOnClickListener {
             finish()
         }
     }
+    // Utility function to get the spinner index
+    private fun getSpinnerIndex(spinner: Spinner, color: Int): Int {
+        val adapter = spinner.adapter as ArrayAdapter<*>
+        for (i in 0 until adapter.count) {
+            if (adapter.getItem(i) == getColorNameFromSpinner(color)) {
+                return i
+            }
+        }
+        return 0
+    }
 
     private fun updateDateButtonText() {
         dateButton.text = selectedDate.toString()
+    }
+
+    private fun getColorNameFromSpinner(color: Int): String {
+        return when (color) {
+            R.color.red -> "Red"
+            R.color.blue -> "Blue"
+            R.color.green -> "Green"
+            R.color.yellow -> "Yellow"
+            // Add more colors here as per your need
+            else -> "Black" // Default color
+        }
     }
 
     private fun getColorFromSpinner(colorName: String): Int {
@@ -158,6 +194,7 @@ class AddNoteActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Log.d("FirebaseStorage", "Note uploaded successfully")
                 setResult(RESULT_OK, Intent().apply {
+                    putExtra("noteId", note.id) // Pass the note ID back
                     putExtra("date", selectedDate.toString())
                     putExtra("title", note.title)
                     putExtra("description", note.description)

@@ -7,4 +7,8 @@
         <item>Yellow</item>
         <item>Teal</item>
     </string-array>
+    <string name="date_text">Date: %s</string>
+    <string name="date_not_available">Date not available</string>
+    <string name="note_deleted_success">Note deleted successfully</string>
+    <string name="note_deleted_failed">Failed to delete note</string>
 </resources>
