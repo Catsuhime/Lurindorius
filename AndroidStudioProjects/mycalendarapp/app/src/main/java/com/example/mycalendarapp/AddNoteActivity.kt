@@ -38,6 +38,8 @@ class AddNoteActivity : AppCompatActivity() {
     private lateinit var backButton: Button
     private lateinit var selectedDate: LocalDate
     private lateinit var noteId: String
+    private lateinit var companyEditText: EditText
+
 
     private val REQUEST_PERMISSION_CODE = 101
 
@@ -48,10 +50,12 @@ class AddNoteActivity : AppCompatActivity() {
         dateButton = findViewById(R.id.dateButton)
         titleEditText = findViewById(R.id.titleEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
+        companyEditText = findViewById(R.id.companyEditText)
         colorSpinner = findViewById(R.id.colorSpinner)
         timePicker = findViewById(R.id.timePicker)
         saveButton = findViewById(R.id.saveButton)
         backButton = findViewById(R.id.backButton)
+
 
         selectedDate = LocalDate.now()
         updateDateButtonText()
@@ -71,6 +75,7 @@ class AddNoteActivity : AppCompatActivity() {
             // Populate fields with existing note data
             titleEditText.setText(intent.getStringExtra("title"))
             descriptionEditText.setText(intent.getStringExtra("description"))
+            companyEditText.setText(intent.getStringExtra("company"))
             val color = intent.getIntExtra("color", R.color.black)
             selectedDate = LocalDate.parse(intent.getStringExtra("date"))
             updateDateButtonText()
@@ -95,6 +100,7 @@ class AddNoteActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             val title = titleEditText.text.toString()
             val description = descriptionEditText.text.toString()
+            val company = companyEditText.text.toString()
             val selectedColorName = colorSpinner.selectedItem.toString()
             val color = getColorFromSpinner(selectedColorName)
             val time = LocalTime.of(timePicker.hour, timePicker.minute)
@@ -130,7 +136,8 @@ class AddNoteActivity : AppCompatActivity() {
                 date = CalendarDay.from(selectedDate),
                 title = title,
                 description = description,
-                color = color
+                color = color,
+                company = company
             )
 
             saveNoteToFirebaseStorage(note)
@@ -199,6 +206,7 @@ class AddNoteActivity : AppCompatActivity() {
                     putExtra("title", note.title)
                     putExtra("description", note.description)
                     putExtra("color", note.color)
+                    putExtra("company", note.company)
                 })
                 finish()
             }

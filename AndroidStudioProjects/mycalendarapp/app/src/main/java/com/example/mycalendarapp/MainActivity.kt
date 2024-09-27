@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var addNoteLauncher: ActivityResultLauncher<Intent>
     private lateinit var editNoteLauncher: ActivityResultLauncher<Intent>
+    private lateinit var addAllNotesButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,11 +42,12 @@ class MainActivity : AppCompatActivity() {
         calendarView = findViewById(R.id.calendarView)
         addNoteButton = findViewById(R.id.addNoteButton)
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
+        addAllNotesButton = findViewById(R.id.allNotesButton)
 
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
 
-        loadNotesFromFirebaseStorage()
+        refreshData()
 
         calendarView.setOnDateChangedListener(OnDateSelectedListener { _, date, _ ->
             loadNotesForDate(date)
@@ -69,6 +72,24 @@ class MainActivity : AppCompatActivity() {
             addNoteLauncher.launch(intent)
         }
 
+        addAllNotesButton.setOnClickListener {
+            val intent = Intent(this, AllNotesActivity::class.java)
+            startActivity(intent)
+        }
+
+        updateCalendarWithNotes()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshData()
+    }
+
+    private fun refreshData() {
+        notes.clear()
+        noteDays.clear()
+        calendarDayDecorators.clear()
+        loadNotesFromFirebaseStorage()
         updateCalendarWithNotes()
     }
 
@@ -78,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         val title = data.getStringExtra("title") ?: return
         val description = data.getStringExtra("description") ?: return
         val color = data.getIntExtra("color", R.color.black)
+        val company = data.getStringExtra("company") ?: ""
 
         val date = LocalDate.parse(dateString)
         val calendarDay = CalendarDay.from(date)
@@ -86,7 +108,8 @@ class MainActivity : AppCompatActivity() {
             date = calendarDay,
             title = title,
             description = description,
-            color = color
+            color = color,
+            company = company
         )
 
         if (notes.any { it.id == noteId }) {
@@ -99,14 +122,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadNotesFromFirebaseStorage() {
         val storageRef = FirebaseStorage.getInstance().reference.child("notes")
+
+        // Clear previous notes and data
+        notes.clear()
+        noteDays.clear()
+        calendarDayDecorators.clear()
+
         storageRef.listAll().addOnSuccessListener { listResult ->
-            val notes = mutableListOf<Note>()
-            listResult.items.forEach { item ->
+            val tasks = listResult.items.map { item ->
                 item.getBytes(Long.MAX_VALUE).addOnSuccessListener { data ->
                     val noteJson = String(data)
                     val note = convertJsonToNote(noteJson)
                     val noteDay = note.date
 
+                    notes.add(note)
                     if (!noteDays.containsKey(noteDay)) {
                         noteDays[noteDay] = ArrayList()
                     }
@@ -116,12 +145,17 @@ class MainActivity : AppCompatActivity() {
                     Log.e("FirebaseStorage", "Error fetching note", e)
                 }
             }
-            notesAdapter.notifyDataSetChanged()
-            updateCalendarWithNotes()
+
+            Tasks.whenAllComplete(tasks).addOnCompleteListener {
+                notesAdapter.updateNotes(notes) // Update adapter with the new notes list
+                updateCalendarWithNotes()
+            }
         }.addOnFailureListener { e ->
             Log.e("FirebaseStorage", "Error listing notes", e)
         }
     }
+
+
 
     private fun convertJsonToNote(json: String): Note {
         val gson = Gson()
@@ -166,6 +200,8 @@ class MainActivity : AppCompatActivity() {
         calendarView.removeDecorators()
         if (calendarDayDecorators.isNotEmpty()) {
             calendarView.addDecorator(DotDecorator(calendarDayDecorators))
+        } else {
+            Log.d("UpdateCalendar", "No decorators to add")
         }
         calendarView.invalidate()
     }
@@ -177,6 +213,7 @@ class MainActivity : AppCompatActivity() {
             putExtra("description", note.description)
             putExtra("color", note.color)
             putExtra("date", note.date.date.toString())
+            putExtra("company", note.company)
         }
         editNoteLauncher.launch(intent)
     }
@@ -204,5 +241,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-

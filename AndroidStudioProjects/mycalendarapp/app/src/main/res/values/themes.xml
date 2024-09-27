@@ -13,12 +13,13 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/gray</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <!-- Theme for Day mode -->
     <style name="Theme.Mycalendarapp.Day" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/purple_500</item>
+
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/teal_200</item>

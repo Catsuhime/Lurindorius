@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
@@ -24,25 +25,15 @@ class NotesListActivity : AppCompatActivity() {
     private lateinit var dateTextView: TextView
     private lateinit var notesRecyclerView: RecyclerView
     private lateinit var notesAdapter: NoteAdapter
-    private lateinit var db: FirebaseFirestore
-
-
-    // Extension function to convert java.util.Date to org.threeten.bp.LocalDate
-    fun Date.toLocalDate(): LocalDate {
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(this.time), ZoneId.systemDefault()).toLocalDate()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidThreeTen.init(this)
         setContentView(R.layout.activity_notes_list)
 
-        // Reference the views by their IDs defined in the XML layout
         dateTextView = findViewById(R.id.dateTextView)
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        db = FirebaseFirestore.getInstance()
 
         val dateStr = intent.getStringExtra("date")
 
@@ -50,7 +41,6 @@ class NotesListActivity : AppCompatActivity() {
             dateTextView.text = dateStr
             fetchNotes(dateStr)
         } else {
-            // Handle the case where dateStr is null, maybe show a default message
             dateTextView.text = "Date not available"
         }
     }
@@ -72,11 +62,8 @@ class NotesListActivity : AppCompatActivity() {
             }
 
             // Wait for all tasks to complete before setting up the adapter
-            tasks.last().addOnCompleteListener {
-                notesAdapter = NoteAdapter(notes, onDelete = { note ->
-                    deleteNote(note)
-                }, onEdit = { note -> editNote(note) // Implement your note editing logic here
-                })
+            Tasks.whenAllComplete(tasks).addOnCompleteListener {
+                notesAdapter = NoteAdapter(notes, onDelete = { note -> deleteNote(note) }, onEdit = { note -> editNote(note) })
                 notesRecyclerView.adapter = notesAdapter
             }
         }.addOnFailureListener { e ->
@@ -90,7 +77,7 @@ class NotesListActivity : AppCompatActivity() {
     }
 
     private fun deleteNote(note: Note) {
-        val storageRef = FirebaseStorage.getInstance().reference.child("notes/${note.id}.json") // Updated path with .json
+        val storageRef = FirebaseStorage.getInstance().reference.child("notes/${note.id}.json")
 
         storageRef.delete().addOnSuccessListener {
             // Successfully deleted note from Firebase Storage
@@ -112,9 +99,10 @@ class NotesListActivity : AppCompatActivity() {
             putExtra("title", note.title)
             putExtra("description", note.description)
             putExtra("color", note.color)
-            putExtra("date", note.date.date.toString())  // Pass the date as a string
+            putExtra("date", note.date.date.toString())
+            putExtra("company", note.company)
         }
-        startActivityForResult(intent, 2)  // Use requestCode 2 for editing notes
+        startActivityForResult(intent, 2)
     }
-
 }
+

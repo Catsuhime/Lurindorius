@@ -19,6 +19,12 @@
         android:layout_height="wrap_content"
         android:text="Description"
         android:textSize="14sp" />
+    <TextView
+        android:id="@+id/companyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company"
+        android:layout_marginTop="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

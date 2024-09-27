@@ -17,6 +17,12 @@
         android:layout_height="wrap_content"
         android:hint="Description" />
 
+    <EditText
+        android:id="@+id/companyEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Company Name" />
+
     <Button
         android:id="@+id/dateButton"
         android:layout_width="match_parent"

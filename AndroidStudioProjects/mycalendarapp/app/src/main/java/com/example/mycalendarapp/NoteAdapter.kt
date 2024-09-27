@@ -11,14 +11,15 @@ import androidx.recyclerview.widget.RecyclerView
 class NoteAdapter(
     val notes: MutableList<Note>,
     private val onDelete: (Note) -> Unit,
-    private val onEdit: (Note) -> Unit // Add this for edit functionality
+    private val onEdit: (Note) -> Unit
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
         val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
+        val companyTextView: TextView = itemView.findViewById(R.id.companyTextView)
         val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
-        val editButton: Button = itemView.findViewById(R.id.editButton) // Add an Edit button
+        val editButton: Button = itemView.findViewById(R.id.editButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -30,21 +31,22 @@ class NoteAdapter(
         val note = notes[position]
         holder.titleTextView.text = note.title
         holder.descriptionTextView.text = note.description
+        holder.companyTextView.text = note.company
+
         holder.deleteButton.setOnClickListener {
             onDelete(note)
         }
         holder.editButton.setOnClickListener {
-            onEdit(note) // Call onEdit when the edit button is clicked
+            onEdit(note)
         }
     }
 
     override fun getItemCount() = notes.size
+
+    // Optional: Add this method to update the notes list
+    fun updateNotes(newNotes: List<Note>) {
+        notes.clear()
+        notes.addAll(newNotes)
+        notifyDataSetChanged()
+    }
 }
-
-
-
-
-
-
-
-

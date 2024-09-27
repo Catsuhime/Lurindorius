@@ -8,10 +8,6 @@ data class Note(
     val date: CalendarDay,
     val title: String,
     val description: String,
-    val color: Int
+    val color: Int,
+    val company: String
 )
-
-
-
-
-
