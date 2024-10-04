@@ -23,6 +23,12 @@
         android:layout_height="wrap_content"
         android:text="All Notes" />
 
+    <Button
+        android:id="@+id/addCalculatorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculator" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notesRecyclerView"
         android:layout_width="match_parent"

@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addNoteLauncher: ActivityResultLauncher<Intent>
     private lateinit var editNoteLauncher: ActivityResultLauncher<Intent>
     private lateinit var addAllNotesButton: Button
+    private lateinit var addCalculatorButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         addNoteButton = findViewById(R.id.addNoteButton)
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
         addAllNotesButton = findViewById(R.id.allNotesButton)
+        addCalculatorButton = findViewById(R.id.addCalculatorButton)
 
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
@@ -76,6 +78,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AllNotesActivity::class.java)
             startActivity(intent)
         }
+
+        addCalculatorButton.setOnClickListener {
+            val intent = Intent(this, CalculatorActivity::class.java)
+            startActivity(intent)
+        }
+
 
         updateCalendarWithNotes()
     }

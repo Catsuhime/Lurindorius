@@ -25,6 +25,7 @@
         <activity android:name=".AddNoteActivity" />
         <activity android:name=".NotesListActivity" />
         <activity android:name=".AllNotesActivity" />
+        <activity android:name=".CalculatorActivity" />
         <receiver android:name=".AlarmReceiver" />
 
     </application>
