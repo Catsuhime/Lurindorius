@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var editNoteLauncher: ActivityResultLauncher<Intent>
     private lateinit var addAllNotesButton: Button
     private lateinit var addCalculatorButton: Button
+    private lateinit var documentsButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
         addAllNotesButton = findViewById(R.id.allNotesButton)
         addCalculatorButton = findViewById(R.id.addCalculatorButton)
+        documentsButton = findViewById(R.id.documentsButton)
 
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
@@ -67,6 +69,11 @@ class MainActivity : AppCompatActivity() {
                 val data: Intent? = result.data
                 data?.let { handleNoteResult(it) }
             }
+        }
+
+        documentsButton.setOnClickListener {
+            val intent = Intent(this, DocumentsActivity::class.java)
+            startActivity(intent)
         }
 
         addNoteButton.setOnClickListener {
