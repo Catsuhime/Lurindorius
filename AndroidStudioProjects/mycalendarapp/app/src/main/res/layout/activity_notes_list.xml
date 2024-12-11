@@ -14,14 +14,18 @@
         android:text="Date"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <!-- RecyclerView to display the list of notes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 </LinearLayout>
 
 

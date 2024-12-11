@@ -1,47 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
+    <!-- Main content layout (Calendar and RecyclerView) -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="56dp"> <!-- Adjust padding for floating button space -->
 
-    <Button
+        <!-- Calendar View -->
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textColorHint="#c0c0c0"/>
+
+        <!-- RecyclerView for Notes -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:textColorHint="#c0c0c0"/>
+
+    </LinearLayout>
+
+    <!-- Floating Action Button for "Add Note" -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addNoteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Note" />
+        android:layout_gravity="right|bottom"
+        android:src="@android:drawable/ic_input_add"
+        android:contentDescription="Add Note"
+        android:layout_marginBottom="60dp"
+        app:fabSize="normal"/>
 
-    <Button
-        android:id="@+id/allNotesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="All Notes" />
-
-    <Button
-        android:id="@+id/addCalculatorButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Calculator" />
-
-    <Button
-        android:id="@+id/documentsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Documents" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/notesRecyclerView"
+    <!-- Bottom Navigation Menu -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/purple_700"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_nav_menu" /> <!-- Add your menu file here -->
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+
 
 
 

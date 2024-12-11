@@ -9,19 +9,25 @@
         android:id="@+id/titleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title" />
+        android:hint="Title"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <EditText
         android:id="@+id/descriptionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description" />
+        android:hint="Description"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <EditText
         android:id="@+id/companyEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Company Name" />
+        android:hint="Company Name"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <Button
         android:id="@+id/dateButton"
@@ -33,12 +39,16 @@
         android:id="@+id/timePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:timePickerMode="spinner" />
+        android:timePickerMode="spinner"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <Spinner
         android:id="@+id/colorSpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <Button
         android:id="@+id/saveButton"

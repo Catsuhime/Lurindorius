@@ -3,16 +3,27 @@ package com.example.mycalendarapp
 //MainActivity
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.storage.FirebaseStorage
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
@@ -24,7 +35,6 @@ import java.util.UUID
 class MainActivity : AppCompatActivity() {
 
     private lateinit var calendarView: MaterialCalendarView
-    private lateinit var addNoteButton: Button
     private lateinit var notesRecyclerView: RecyclerView
     private val notes = mutableListOf<Note>()
     private val notesAdapter = NoteAdapter(notes, ::deleteNote, ::editNote)
@@ -33,20 +43,22 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var addNoteLauncher: ActivityResultLauncher<Intent>
     private lateinit var editNoteLauncher: ActivityResultLauncher<Intent>
-    private lateinit var addAllNotesButton: Button
-    private lateinit var addCalculatorButton: Button
-    private lateinit var documentsButton: Button
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var addNoteButton: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        FirebaseApp.initializeApp(this)
+        val provider = PlayIntegrityAppCheckProviderFactory.getInstance()
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(provider)
+
+
         calendarView = findViewById(R.id.calendarView)
         addNoteButton = findViewById(R.id.addNoteButton)
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
-        addAllNotesButton = findViewById(R.id.allNotesButton)
-        addCalculatorButton = findViewById(R.id.addCalculatorButton)
-        documentsButton = findViewById(R.id.documentsButton)
+        bottomNavigationView = findViewById(R.id.bottomNavigation)
 
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
@@ -71,30 +83,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        documentsButton.setOnClickListener {
-            val intent = Intent(this, DocumentsActivity::class.java)
-            startActivity(intent)
-        }
-
         addNoteButton.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
         }
 
-        addAllNotesButton.setOnClickListener {
-            val intent = Intent(this, AllNotesActivity::class.java)
-            startActivity(intent)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_all_notes -> {
+                    val intent = Intent(this, AllNotesActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_calculator -> {
+                    val intent = Intent(this, CalculatorActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_documents -> {
+                    val intent = Intent(this, DocumentsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
         }
-
-        addCalculatorButton.setOnClickListener {
-            val intent = Intent(this, CalculatorActivity::class.java)
-            startActivity(intent)
-        }
-
 
         updateCalendarWithNotes()
     }
 
+    //Main
     override fun onResume() {
         super.onResume()
         refreshData()

@@ -11,14 +11,19 @@
         android:id="@+id/companyFilterSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp" /> <!-- Ensures touch target size -->/>
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
+    <!-- Ensures touch target size -->/>
     <!-- RecyclerView for showing notes -->
     
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/allNotesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <!-- Back button -->
     <Button

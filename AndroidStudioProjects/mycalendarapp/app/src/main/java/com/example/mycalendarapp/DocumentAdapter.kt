@@ -1,16 +1,19 @@
 package com.example.mycalendarapp
 //DocumentAdapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class DocumentAdapter(
-    private val documents: List<Document>,
+    private val documents: MutableList<Document>,
     private val onDelete: (Document) -> Unit,
     private val onDownload: (Document) -> Unit
 ) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
@@ -30,13 +33,23 @@ class DocumentAdapter(
 
     override fun onBindViewHolder(holder: DocumentViewHolder, position: Int) {
         val document = documents[position]
-        holder.documentIdTextView.text = document.id
-        holder.uploadDateTextView.text = Date(document.uploadDate).toString()
-        holder.companyTextView.text = document.company
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+
+        holder.documentIdTextView.text = "ID: ${document.id}"
+        holder.uploadDateTextView.text = "Uploaded: ${dateFormat.format(Date(document.uploadDate))}"
+        holder.companyTextView.text = "Company: ${document.company}"
 
         holder.deleteButton.setOnClickListener { onDelete(document) }
         holder.downloadButton.setOnClickListener { onDownload(document) }
     }
 
+    fun updateData(newDocuments: List<Document>) {
+        Log.d("DocumentAdapter", "Updating adapter with ${newDocuments.size} documents.")
+        documents.clear()
+        documents.addAll(newDocuments.sortedByDescending { it.uploadDate })
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount() = documents.size
 }
+

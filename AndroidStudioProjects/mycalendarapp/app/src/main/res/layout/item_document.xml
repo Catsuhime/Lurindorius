@@ -12,19 +12,25 @@
         android:layout_height="wrap_content"
         android:text="Document ID"
         android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <TextView
         android:id="@+id/uploadDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Uploaded Date" />
+        android:text="Uploaded Date"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <TextView
         android:id="@+id/companyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Company" />
+        android:text="Company"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

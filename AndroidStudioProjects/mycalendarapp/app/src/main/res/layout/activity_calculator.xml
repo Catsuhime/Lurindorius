@@ -8,14 +8,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enter number of documents for each type:"
             android:textSize="18sp"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="#c0c0c0"/>
 
         <!-- Table Header -->
         <TableLayout
@@ -29,19 +33,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Document Type"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Price per doc (€)"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Documents (input)"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <!-- Rows for each document type -->
@@ -49,12 +59,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Invoices Received"/>
+                    android:text="Invoices Received"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1"/>
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/invoicesReceivedInput"
@@ -63,19 +77,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Invoices Issued"/>
+                    android:text="Invoices Issued"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1"/>
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/invoicesIssuedInput"
@@ -84,19 +104,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bank Documents"/>
+                    android:text="Bank Documents"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1"/>
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/bankDocumentsInput"
@@ -105,19 +131,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cash Register Docs"/>
+                    android:text="Cash Register Docs"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1"/>
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/cashRegisterDocsInput"
@@ -126,19 +158,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Advance Payments"/>
+                    android:text="Advance Payments"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2"/>
+                    android:text="2"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/advancePaymentsInput"
@@ -147,19 +185,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fixed Assets"/>
+                    android:text="Fixed Assets"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2"/>
+                    android:text="2"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/fixedAssetsInput"
@@ -168,19 +212,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Author Contracts"/>
+                    android:text="Author Contracts"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2"/>
+                    android:text="2"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/authorContractsInput"
@@ -189,19 +239,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Transport Means"/>
+                    android:text="Transport Means"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2"/>
+                    android:text="2"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/transportMeansInput"
@@ -210,19 +266,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Local Business Trips"/>
+                    android:text="Local Business Trips"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1"/>
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/localBusinessTripsInput"
@@ -231,19 +293,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="International Business Trips"/>
+                    android:text="International Business Trips"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3"/>
+                    android:text="3"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/internationalBusinessTripsInput"
@@ -252,19 +320,25 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
 
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Payroll Operations"/>
+                    android:text="Payroll Operations"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="15"/>
+                    android:text="15"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
 
                 <EditText
                     android:id="@+id/payrollOperationsInput"
@@ -273,7 +347,9 @@
                     android:inputType="number"
                     android:minHeight="48dp"
                     android:padding="8dp"
-                    android:hint="0"/>
+                    android:hint="0"
+                    android:textColor="@color/black"
+                    android:textColorHint="#c0c0c0"/>
             </TableRow>
         </TableLayout>
 
@@ -290,7 +366,9 @@
             android:layout_height="wrap_content"
             android:text="Total Price: €0"
             android:textSize="20sp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="#c0c0c0"/>
     </LinearLayout>
 </ScrollView>
 

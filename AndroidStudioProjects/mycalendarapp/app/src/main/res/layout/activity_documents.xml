@@ -1,39 +1,77 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
+
+    <Spinner
+        android:id="@+id/companyFilterSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:padding="8dp" />
+
+    <Button
+        android:id="@+id/dateFilterButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/companyFilterSpinner"
+        android:layout_margin="16dp"
+        android:text="Filter by Date" />
+
+    <Button
+        android:id="@+id/clearFiltersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dateFilterButton"
+        android:layout_margin="16dp"
+        android:text="Clear Filters" />
+
+    <TextView
+        android:id="@+id/filterMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/clearFiltersButton"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        android:text="No documents found"
+        android:textSize="16sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/documentsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/loadingProgressBar"
+        android:layout_below="@id/clearFiltersButton"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="225dp"
+        android:layout_marginBottom="0dp"
+        android:padding="16dp" />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="225dp"
+        android:layout_marginBottom="0dp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/uploadDocumentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Upload Document"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp" />
+        android:layout_margin="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
-    <Spinner
-        android:id="@+id/companySpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+</RelativeLayout>
 
-    <EditText
-        android:id="@+id/manualCompanyEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Add Company Manually (if not listed)"
-        android:layout_marginBottom="16dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/documentsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/uploadDocumentButton"
-        android:padding="8dp" />
-</LinearLayout>
+
+
+
+
+
 
 
 

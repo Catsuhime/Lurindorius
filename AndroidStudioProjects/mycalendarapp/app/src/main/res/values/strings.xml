@@ -7,6 +7,9 @@
         <item>Yellow</item>
         <item>Teal</item>
     </string-array>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="company_filter_prompt">Select Company</string>
+    <string name="recent_upload">Uploaded Recently</string>
     <string name="date_text">Date: %s</string>
     <string name="date_not_available">Date not available</string>
     <string name="note_deleted_success">Note deleted successfully</string>
