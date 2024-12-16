@@ -1,11 +1,13 @@
 package com.example.mycalendarapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class CalculatorActivity : AppCompatActivity() {
 
@@ -61,6 +63,26 @@ class CalculatorActivity : AppCompatActivity() {
 
         // Initialize result text view
         resultTextView.text = "Total Price: €0"
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_all_notes -> {
+                    val intent = Intent(this, AllNotesActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_back -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                R.id.nav_documents -> {
+                    startActivity(Intent(this, DocumentsActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun calculateTotalPrice() {

@@ -1,7 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Spinner for Company Filter -->
     <Spinner
         android:id="@+id/companyFilterSpinner"
         android:layout_width="match_parent"
@@ -9,6 +11,7 @@
         android:layout_margin="16dp"
         android:padding="8dp" />
 
+    <!-- Filter by Date Button -->
     <Button
         android:id="@+id/dateFilterButton"
         android:layout_width="match_parent"
@@ -17,6 +20,7 @@
         android:layout_margin="16dp"
         android:text="Filter by Date" />
 
+    <!-- Clear Filters Button -->
     <Button
         android:id="@+id/clearFiltersButton"
         android:layout_width="match_parent"
@@ -25,6 +29,7 @@
         android:layout_margin="16dp"
         android:text="Clear Filters" />
 
+    <!-- Filter Message -->
     <TextView
         android:id="@+id/filterMessage"
         android:layout_width="wrap_content"
@@ -35,36 +40,49 @@
         android:text="No documents found"
         android:textSize="16sp" />
 
+    <!-- RecyclerView for displaying documents -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/documentsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/loadingProgressBar"
+        android:layout_height="0dp"
+        android:layout_above="@id/bottomNavigation"
         android:layout_below="@id/clearFiltersButton"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="225dp"
-        android:layout_marginBottom="0dp"
-        android:padding="16dp" />
+        android:layout_margin="16dp" />
 
+    <!-- Loading Progress Bar -->
     <ProgressBar
         android:id="@+id/loadingProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginTop="225dp"
-        android:layout_marginBottom="0dp"
         android:visibility="gone" />
 
-    <Button
+    <!-- Floating Action Button for Upload -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/uploadDocumentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Document"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/bottomNavigation"
         android:layout_margin="16dp"
+        android:src="@android:drawable/ic_input_add"
+        android:contentDescription="Upload Document"
+        app:fabSize="normal" />
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:background="@color/purple_700"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_nav_menu_aad" />
 
 </RelativeLayout>
+
+
 
 
 

@@ -1,38 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <!-- Spinner for Company Filter -->
-    <Spinner
-        android:id="@+id/companyFilterSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:textColor="@color/black"
-        android:textColorHint="#c0c0c0"/>
-    <!-- Ensures touch target size -->/>
-    <!-- RecyclerView for showing notes -->
-    
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/allNotesRecyclerView"
+    <!-- Content Section with Padding -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:textColor="@color/black"
-        android:textColorHint="#c0c0c0"/>
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- Back button -->
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
+        <!-- Spinner for Company Filter -->
+        <Spinner
+            android:id="@+id/companyFilterSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
+
+        <!-- Title Filter -->
+        <EditText
+            android:id="@+id/titleFilterEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Filter by Title"
+            android:inputType="text" />
+
+        <!-- Date Filter -->
+        <Button
+            android:id="@+id/dateFilterButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Date" />
+
+        <!-- RecyclerView for showing notes -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allNotesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!-- Bottom Navigation Bar (No Padding) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:minHeight="48dp"/>  <!-- Ensures touch target size -->
-
+        android:layout_gravity="bottom"
+        android:background="@color/purple_700"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_nav_menu_aan" />
 </LinearLayout>
+
+
+
 
 

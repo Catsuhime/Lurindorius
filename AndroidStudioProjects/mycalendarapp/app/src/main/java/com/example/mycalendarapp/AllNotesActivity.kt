@@ -1,18 +1,23 @@
 package com.example.mycalendarapp
 //AllNotesActivity
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AllNotesActivity : AppCompatActivity() {
 
@@ -22,46 +27,68 @@ class AllNotesActivity : AppCompatActivity() {
     private val notesAdapter = NoteAdapter(filteredNotes, ::deleteNote, ::editNote)
 
     private lateinit var companyFilterSpinner: Spinner
-    private lateinit var backButton: Button
+    private lateinit var titleFilterEditText: EditText
+    private lateinit var dateFilterButton: Button
     private val companyList = mutableSetOf<String>()
+
+    private var selectedDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_notes)
 
-        // Initialize RecyclerView
+        // Initialize UI elements
         notesRecyclerView = findViewById(R.id.allNotesRecyclerView)
+        companyFilterSpinner = findViewById(R.id.companyFilterSpinner)
+        titleFilterEditText = findViewById(R.id.titleFilterEditText)
+        dateFilterButton = findViewById(R.id.dateFilterButton)
+
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
 
-        // Initialize Spinner and Back Button
-        companyFilterSpinner = findViewById(R.id.companyFilterSpinner)
-        backButton = findViewById(R.id.backButton)
-
-        // Load notes from Firebase Storage
         loadAllNotesFromFirebaseStorage()
 
-        // Back button click listener
-        backButton.setOnClickListener {
-            finish() // Finish activity and return to the previous screen
-        }
-
-        // Set listener for Spinner selection
         companyFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedCompany = parent?.getItemAtPosition(position).toString()
-                filterNotesByCompany(selectedCompany)
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                applyFilters()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // No action needed
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        titleFilterEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                applyFilters()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        companyFilterSpinner.setSelection(0)
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_back -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                R.id.nav_calculator -> {
+                    val intent = Intent(this, CalculatorActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_documents -> {
+                    startActivity(Intent(this, DocumentsActivity::class.java))
+                    true
+                }
+                else -> false
             }
         }
+
+        dateFilterButton.setOnClickListener { showDatePicker() }
     }
 
     private fun loadAllNotesFromFirebaseStorage() {
@@ -78,33 +105,69 @@ class AllNotesActivity : AppCompatActivity() {
                 }
             }
 
-            // After loading all notes, update UI
+            // Check if notes are loaded correctly
             tasks.lastOrNull()?.addOnCompleteListener {
                 populateCompanyFilterSpinner()
                 notesAdapter.updateNotes(notes) // Update RecyclerView with all notes
+                Log.d("AllNotesActivity", "Total Notes Loaded: ${notes.size}")
             }
 
         }.addOnFailureListener { e ->
-            // Handle error
+            Log.e("AllNotesActivity", "Error loading notes: ${e.message}")
         }
     }
 
     private fun populateCompanyFilterSpinner() {
-        // Convert companyList to ArrayAdapter for Spinner
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, companyList.toList())
+        // Add "All Companies" as the first option, followed by the sorted company list
+        val companyOptions = mutableListOf("All Companies").apply {
+            addAll(companyList.sorted()) // Add other companies alphabetically
+        }
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, companyOptions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         companyFilterSpinner.adapter = adapter
+
+        // Set "All Companies" as the default selection
+        companyFilterSpinner.setSelection(0)
     }
 
-    private fun filterNotesByCompany(company: String) {
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+            selectedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+            dateFilterButton.text = selectedDate
+            applyFilters()
+        }, year, month, day).show()
+    }
+
+    private fun applyFilters() {
+        val selectedCompany = companyFilterSpinner.selectedItem?.toString()
+        val titleQuery = titleFilterEditText.text.toString()
+        val dateQuery = selectedDate
+
         filteredNotes.clear()
-        if (company.isNotEmpty()) {
-            filteredNotes.addAll(notes.filter { it.company == company })
-        } else {
-            filteredNotes.addAll(notes) // Show all notes if no company is selected
-        }
+        filteredNotes.addAll(notes.filter { note ->
+            val noteDate = formatDate(note.date)
+
+            (selectedCompany == "All Companies" || note.company == selectedCompany) &&
+                    (titleQuery.isEmpty() || note.title.contains(titleQuery, ignoreCase = true)) &&
+                    (dateQuery == null || noteDate == dateQuery)
+        })
         notesAdapter.notifyDataSetChanged()
     }
+
+
+    private fun formatDate(calendarDay: CalendarDay): String {
+        val calendar = Calendar.getInstance()
+        calendar.set(calendarDay.year, calendarDay.month - 1, calendarDay.day) // Month is zero-based
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return dateFormat.format(calendar.time)
+    }
+
 
     private fun convertJsonToNote(json: String): Note {
         val gson = Gson()
@@ -117,7 +180,7 @@ class AllNotesActivity : AppCompatActivity() {
             putExtra("title", note.title)
             putExtra("description", note.description)
             putExtra("color", note.color)
-            putExtra("date", note.date.date.toString())
+            putExtra("date", note.date)
             putExtra("company", note.company)
         }
         startActivity(intent)
@@ -134,8 +197,5 @@ class AllNotesActivity : AppCompatActivity() {
             // Handle deletion error
         }
     }
+
 }
-
-
-
-

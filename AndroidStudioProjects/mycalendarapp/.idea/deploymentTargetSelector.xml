@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-25T17:12:24.059126300Z">
+        <DropdownSelection timestamp="2024-12-15T14:30:50.882491600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ketsu\.android\avd\PS1_API_33.avd" />

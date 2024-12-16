@@ -28,6 +28,8 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import android.Manifest
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,7 +42,7 @@ class DocumentsActivity : AppCompatActivity() {
     private lateinit var clearFiltersButton: Button
     private lateinit var filterMessage: TextView
     private lateinit var loadingProgressBar: ProgressBar
-    private lateinit var uploadDocumentButton: Button
+    private lateinit var uploadDocumentButton: FloatingActionButton
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
 
     private val documents = mutableListOf<Document>()
@@ -87,6 +89,26 @@ class DocumentsActivity : AppCompatActivity() {
             }
         }
 
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_calculator -> {
+                    startActivity(Intent(this, CalculatorActivity::class.java))
+                    true
+                }
+                R.id.nav_documents -> {
+                    startActivity(Intent(this, DocumentsActivity::class.java))
+                    true
+                }
+                R.id.nav_back -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
         // Fetch initial data
         loadDocumentsFromFirebaseStorage()
         fetchCompanyNames()
@@ -94,6 +116,7 @@ class DocumentsActivity : AppCompatActivity() {
         setupFilters()
         setupEndlessScrolling()
     }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -203,7 +226,7 @@ class DocumentsActivity : AppCompatActivity() {
                 path = "documents/$documentId.pdf"
             )
             saveDocumentMetadata(document)
-            loadDocumentsFromFirebaseStorage()
+            loadDocumentsFromFirebaseStorage()  // Reload documents after upload
             Toast.makeText(this, "Document uploaded successfully", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener { exception ->
             Log.e("UploadDocument", "Failed to upload: ${exception.message}")
@@ -243,7 +266,7 @@ class DocumentsActivity : AppCompatActivity() {
             selectedDate = null
             companyFilterSpinner.setSelection(0)
             filterMessage.visibility = View.GONE
-            applyFilters()
+            loadDocumentsFromFirebaseStorage()
         }
     }
 
@@ -321,7 +344,8 @@ class DocumentsActivity : AppCompatActivity() {
             }
             // After all tasks are complete
             Tasks.whenAll(tasks).addOnCompleteListener {
-                documents.addAll(newDocuments) // Add the newly loaded documents to the list
+                documents.clear()  // Clear existing documents
+                documents.addAll(newDocuments)  // Add newly loaded documents to the list
                 isLoading = false
                 loadingProgressBar.visibility = View.GONE
 

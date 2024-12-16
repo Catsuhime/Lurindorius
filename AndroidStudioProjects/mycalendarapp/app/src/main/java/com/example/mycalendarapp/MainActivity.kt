@@ -147,6 +147,7 @@ class MainActivity : AppCompatActivity() {
 
         if (notes.any { it.id == noteId }) {
             updateEditedNoteInCalendar(note)
+
         } else {
             addNoteToCalendar(note)
         }

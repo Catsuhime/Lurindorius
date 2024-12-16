@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_all_notes"
+        android:icon="@drawable/ic_note"
+        android:title="All Notes" />
+    <item
+        android:id="@+id/nav_back"
+        android:icon="@drawable/ic_back"
+        android:title="Back" />
+    <item
+        android:id="@+id/nav_documents"
+        android:icon="@drawable/ic_documents"
+        android:title="Documents" />
+</menu>
+

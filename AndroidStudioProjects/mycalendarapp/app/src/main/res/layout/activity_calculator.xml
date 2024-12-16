@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    tools:context=".CalculatorActivity">
+
+    <!-- Main content layout (form and calculator) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="56dp"> <!-- Adjust padding for floating button space -->
+
+        <!-- Your existing ScrollView for input form -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -371,7 +385,21 @@
             android:textColorHint="#c0c0c0"/>
     </LinearLayout>
 </ScrollView>
+    </LinearLayout>
 
+    <!-- Bottom Navigation Menu -->
+<com.google.android.material.bottomnavigation.BottomNavigationView
+android:id="@+id/bottomNavigation"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_alignParentBottom="true"
+android:layout_gravity="bottom"
+android:background="@color/purple_700"
+app:itemIconTint="@color/white"
+app:itemTextColor="@color/white"
+app:menu="@menu/bottom_nav_menu_aac" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 
