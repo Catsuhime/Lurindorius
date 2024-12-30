@@ -9,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="16dp"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"
+        android:background="@color/gray"/>
 
     <!-- Filter by Date Button -->
     <Button
@@ -78,7 +81,7 @@
         android:background="@color/purple_700"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
-        app:menu="@menu/bottom_nav_menu_aad" />
+        app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>
 

@@ -19,7 +19,10 @@
             android:id="@+id/companyFilterSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:textColor="@color/black"
+            android:textColorHint="#c0c0c0"
+            android:background="@color/gray"/>
 
         <!-- Title Filter -->
         <EditText
@@ -27,7 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Filter by Title"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:textColorHint="#c0c0c0"/>
 
         <!-- Date Filter -->
         <Button
@@ -53,7 +58,7 @@
         android:background="@color/purple_700"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
-        app:menu="@menu/bottom_nav_menu_aan" />
+        app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>
 
 

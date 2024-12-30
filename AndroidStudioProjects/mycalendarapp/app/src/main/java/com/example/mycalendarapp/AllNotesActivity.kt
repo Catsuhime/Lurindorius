@@ -69,10 +69,14 @@ class AllNotesActivity : AppCompatActivity() {
         companyFilterSpinner.setSelection(0)
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
-        bottomNavigationView.setOnItemSelectedListener { item ->
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_back -> {
-                    startActivity(Intent(this, MainActivity::class.java))
+                R.id.nav_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_all_notes -> {
                     true
                 }
                 R.id.nav_calculator -> {
@@ -81,7 +85,8 @@ class AllNotesActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_documents -> {
-                    startActivity(Intent(this, DocumentsActivity::class.java))
+                    val intent = Intent(this, DocumentsActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 else -> false

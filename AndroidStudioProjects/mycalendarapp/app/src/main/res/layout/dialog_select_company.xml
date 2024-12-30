@@ -9,11 +9,16 @@
         android:id="@+id/companySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"
+        android:background="@color/gray"/>
 
     <EditText
         android:id="@+id/customCompanyEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Or enter a new company name" />
+        android:hint="Or enter a new company name"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
 </LinearLayout>

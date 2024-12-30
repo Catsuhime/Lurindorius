@@ -90,6 +90,9 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_home -> {
+                    true
+                }
                 R.id.nav_all_notes -> {
                     val intent = Intent(this, AllNotesActivity::class.java)
                     startActivity(intent)

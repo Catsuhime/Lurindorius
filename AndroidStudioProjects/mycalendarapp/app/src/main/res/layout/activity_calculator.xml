@@ -397,7 +397,7 @@ android:layout_gravity="bottom"
 android:background="@color/purple_700"
 app:itemIconTint="@color/white"
 app:itemTextColor="@color/white"
-app:menu="@menu/bottom_nav_menu_aac" />
+app:menu="@menu/bottom_nav_menu" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
