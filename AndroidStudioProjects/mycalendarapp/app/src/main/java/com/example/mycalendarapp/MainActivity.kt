@@ -3,19 +3,12 @@ package com.example.mycalendarapp
 //MainActivity
 
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.Tasks
@@ -54,11 +47,26 @@ class MainActivity : AppCompatActivity() {
         val provider = PlayIntegrityAppCheckProviderFactory.getInstance()
         FirebaseAppCheck.getInstance().installAppCheckProviderFactory(provider)
 
-
         calendarView = findViewById(R.id.calendarView)
         addNoteButton = findViewById(R.id.addNoteButton)
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
         bottomNavigationView = findViewById(R.id.bottomNavigation)
+
+        // Check if the user is logged in
+        val sharedPreferences = getSharedPreferences("MyCalendarApp", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+
+        // If not logged in, show LoginActivity
+        if (!isLoggedIn) {
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            startActivity(loginIntent)
+            finish() // Ensure MainActivity is not shown
+            return
+        }
+
+        // If logged in, proceed with MainActivity
+        val loggedInUserName = sharedPreferences.getString("userName", "")
+        Toast.makeText(this, "Welcome, $loggedInUserName", Toast.LENGTH_SHORT).show()
 
         notesRecyclerView.layoutManager = LinearLayoutManager(this)
         notesRecyclerView.adapter = notesAdapter
@@ -90,9 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> {
-                    true
-                }
+                R.id.nav_home -> true
                 R.id.nav_all_notes -> {
                     val intent = Intent(this, AllNotesActivity::class.java)
                     startActivity(intent)
@@ -108,11 +114,30 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+                R.id.nav_logout -> {
+                    logOut()
+                    true
+                }
                 else -> false
             }
         }
 
         updateCalendarWithNotes()
+    }
+
+    private fun logOut() {
+        // Clear the login status from SharedPreferences
+        val sharedPreferences = getSharedPreferences("MyCalendarApp", MODE_PRIVATE)
+        sharedPreferences.edit().apply {
+            putBoolean("isLoggedIn", false)
+            remove("userName")
+            apply()
+        }
+
+        // Redirect to LoginActivity
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
+        finish()
     }
 
     //Main

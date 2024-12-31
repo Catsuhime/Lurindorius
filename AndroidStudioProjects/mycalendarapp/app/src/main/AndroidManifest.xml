@@ -28,6 +28,8 @@
         <activity android:name=".AllNotesActivity" />
         <activity android:name=".CalculatorActivity" />
         <activity android:name=".DocumentsActivity"/>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RegistrationActivity"/>
         <receiver android:name=".AlarmReceiver" />
 
     </application>

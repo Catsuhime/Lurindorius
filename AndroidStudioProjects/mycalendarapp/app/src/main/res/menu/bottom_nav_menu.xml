@@ -15,5 +15,9 @@
         android:id="@+id/nav_documents"
         android:icon="@drawable/ic_documents"
         android:title="Documents" />
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_back"
+        android:title="Logout" />
 </menu>
 

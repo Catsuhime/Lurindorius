@@ -21,7 +21,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.Tasks
@@ -111,6 +110,10 @@ class DocumentsActivity : AppCompatActivity() {
                 R.id.nav_documents -> {
                     true
                 }
+                R.id.nav_logout -> {
+                    logOut()
+                    true
+                }
                 else -> false
             }
         }
@@ -123,6 +126,20 @@ class DocumentsActivity : AppCompatActivity() {
         setupEndlessScrolling()
     }
 
+    private fun logOut() {
+        // Clear the login status from SharedPreferences
+        val sharedPreferences = getSharedPreferences("MyCalendarApp", MODE_PRIVATE)
+        sharedPreferences.edit().apply {
+            putBoolean("isLoggedIn", false)
+            remove("userName")
+            apply()
+        }
+
+        // Redirect to LoginActivity
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
+        finish()
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

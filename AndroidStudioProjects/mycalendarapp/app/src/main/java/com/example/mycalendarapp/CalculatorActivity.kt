@@ -85,9 +85,28 @@ class CalculatorActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+                R.id.nav_logout -> {
+                    logOut()
+                    true
+                }
                 else -> false
             }
         }
+    }
+
+    private fun logOut() {
+        // Clear the login status from SharedPreferences
+        val sharedPreferences = getSharedPreferences("MyCalendarApp", MODE_PRIVATE)
+        sharedPreferences.edit().apply {
+            putBoolean("isLoggedIn", false)
+            remove("userName")
+            apply()
+        }
+
+        // Redirect to LoginActivity
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
+        finish()
     }
 
     private fun calculateTotalPrice() {
