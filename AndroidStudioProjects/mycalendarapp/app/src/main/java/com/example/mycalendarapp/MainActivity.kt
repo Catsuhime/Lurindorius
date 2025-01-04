@@ -52,19 +52,16 @@ class MainActivity : AppCompatActivity() {
         notesRecyclerView = findViewById(R.id.notesRecyclerView)
         bottomNavigationView = findViewById(R.id.bottomNavigation)
 
-        // Check if the user is logged in
         val sharedPreferences = getSharedPreferences("MyCalendarApp", MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
 
-        // If not logged in, show LoginActivity
         if (!isLoggedIn) {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
-            finish() // Ensure MainActivity is not shown
+            finish()
             return
         }
 
-        // If logged in, proceed with MainActivity
         val loggedInUserName = sharedPreferences.getString("userName", "")
         Toast.makeText(this, "Welcome, $loggedInUserName", Toast.LENGTH_SHORT).show()
 
