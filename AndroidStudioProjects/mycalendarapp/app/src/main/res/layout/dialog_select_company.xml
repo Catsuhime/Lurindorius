@@ -5,14 +5,22 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Document"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
     <Spinner
         android:id="@+id/companySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:textColor="@color/black"
-        android:textColorHint="#c0c0c0"
-        android:background="@color/gray"/>
+        android:textColorHint="#c0c0c0"/>
 
     <EditText
         android:id="@+id/customCompanyEditText"
@@ -21,4 +29,13 @@
         android:hint="Or enter a new company name"
         android:textColor="@color/black"
         android:textColorHint="#c0c0c0"/>
+
+    <EditText
+        android:id="@+id/documentNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter document name"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"
+        android:layout_marginTop="16dp"/>
 </LinearLayout>

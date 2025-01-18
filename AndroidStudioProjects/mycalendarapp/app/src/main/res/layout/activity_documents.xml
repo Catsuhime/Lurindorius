@@ -11,8 +11,7 @@
         android:layout_margin="16dp"
         android:padding="8dp"
         android:textColor="@color/black"
-        android:textColorHint="#c0c0c0"
-        android:background="@color/gray"/>
+        android:textColorHint="#c0c0c0"/>
 
     <!-- Filter by Date Button -->
     <Button

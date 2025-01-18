@@ -55,6 +55,8 @@ class DocumentsActivity : AppCompatActivity() {
         private val REQUEST_CODE_STORAGE_PERMISSION = 1001
     }
 
+    private var tempDocumentName: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_documents)
@@ -74,7 +76,11 @@ class DocumentsActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { fileUri ->
                     Log.d("DocumentsActivity", "File selected: $fileUri")
-                    uploadDocument(fileUri)  // Proceed with uploading the selected file
+                    tempDocumentName?.let { name ->
+                        uploadDocument(fileUri, name) // Pass the document name
+                    } ?: run {
+                        Toast.makeText(this, "Document name is missing", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Log.d("DocumentsActivity", "No file selected or selection failed")
@@ -82,8 +88,9 @@ class DocumentsActivity : AppCompatActivity() {
         }
 
         uploadDocumentButton.setOnClickListener {
-            showCompanySelectionDialog { selectedCompanyName ->
+            showCompanySelectionDialog { selectedCompanyName, documentName ->
                 selectedCompany = selectedCompanyName
+                tempDocumentName = documentName
                 openFilePicker()
             }
         }
@@ -145,15 +152,13 @@ class DocumentsActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted
+                // Launch file picker
                 openFilePicker()
             } else {
-                // Permission was denied
+                // Permission denied
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // User denied permission permanently
                     showPermissionSettingsDialog()
                 } else {
-                    // Permission denied temporarily
                     Toast.makeText(this, "Permission is required to select a file", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -178,41 +183,45 @@ class DocumentsActivity : AppCompatActivity() {
 
     private fun openFilePicker() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            type = "application/pdf" // Specify the type of file you want to open
+            type = "application/pdf" // Specify file type
             addCategory(Intent.CATEGORY_OPENABLE)
         }
         filePickerLauncher.launch(intent)
     }
 
 
-
-    private fun showCompanySelectionDialog(onCompanySelected: (String) -> Unit) {
+    private fun showCompanySelectionDialog(onCompanySelected: (String, String) -> Unit) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_select_company, null)
         val companySpinner = dialogView.findViewById<Spinner>(R.id.companySpinner)
         val customCompanyEditText = dialogView.findViewById<EditText>(R.id.customCompanyEditText)
+        val documentNameEditText = dialogView.findViewById<EditText>(R.id.documentNameEditText)
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, companyNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         companySpinner.adapter = adapter
 
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Select Company")
             .setView(dialogView)
             .setPositiveButton("OK") { _, _ ->
                 val selectedCompany = when {
-                    // Custom company entered
-                    customCompanyEditText.text.isNotEmpty() -> customCompanyEditText.text.toString()
-                    // Pre-selected company
+                    customCompanyEditText.text.isNotEmpty() -> {
+                        val customCompany = customCompanyEditText.text.toString().trim()
+                        companyNames.add(customCompany)
+                        adapter.notifyDataSetChanged()
+                        customCompany
+                    }
                     companySpinner.selectedItemPosition > 0 -> companyNames[companySpinner.selectedItemPosition]
                     else -> null
                 }
 
-                if (!selectedCompany.isNullOrEmpty()) {
-                    this.selectedCompany = selectedCompany // Save the selected company globally
-                    onCompanySelected(selectedCompany)
-                } else {
-                    Toast.makeText(this, "Please select or enter a company name", Toast.LENGTH_SHORT).show()
+                val documentName = documentNameEditText.text.toString().trim()
+
+                if (selectedCompany.isNullOrEmpty() || documentName.isEmpty()) {
+                    Toast.makeText(this, "Please select a company and enter a document name", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
                 }
+
+                onCompanySelected(selectedCompany, documentName)
             }
             .setNegativeButton("Cancel", null)
             .create()
@@ -220,41 +229,43 @@ class DocumentsActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun uploadDocument(fileUri: Uri) {
-        val documentId = UUID.randomUUID().toString()
-        val internalFile = File(filesDir, "$documentId.pdf")  // Save file to internal storage
 
-        // Copy file from URI to internal storage
-        contentResolver.openInputStream(fileUri)?.use { inputStream ->
-            internalFile.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
+    private fun uploadDocument(fileUri: Uri, documentName: String) {
+        val documentId = UUID.randomUUID().toString()
+        val internalFile = File(filesDir, "$documentId.pdf")
+
+        try {
+            contentResolver.openInputStream(fileUri)?.use { inputStream ->
+                internalFile.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
             }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to copy file: ${e.message}", Toast.LENGTH_SHORT).show()
+            return
         }
 
         val storageRef = FirebaseStorage.getInstance().reference.child("documents/$documentId.pdf")
         val uploadTask = storageRef.putFile(Uri.fromFile(internalFile))
 
-        if (selectedCompany.isNullOrEmpty()) {
-            Toast.makeText(this, "Company not selected. Please try again.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         uploadTask.addOnSuccessListener {
             val uploadDate = System.currentTimeMillis()
             val document = Document(
                 id = documentId,
+                name = documentName,
                 uploadDate = uploadDate,
                 company = selectedCompany ?: "Unknown",
                 path = "documents/$documentId.pdf"
             )
+
             saveDocumentMetadata(document)
-            loadDocumentsFromFirebaseStorage()  // Reload documents after upload
             Toast.makeText(this, "Document uploaded successfully", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener { exception ->
-            Log.e("UploadDocument", "Failed to upload: ${exception.message}")
+        }.addOnFailureListener {
             Toast.makeText(this, "Failed to upload document", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private fun saveDocumentMetadata(document: Document) {
         val metadataRef = FirebaseStorage.getInstance().reference.child("documents_metadata/${document.id}.json")
@@ -342,8 +353,10 @@ class DocumentsActivity : AppCompatActivity() {
         companyNames.clear()
         companyNames.add("All Companies")
         companyNames.addAll(companies)
+
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, companyNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
         companyFilterSpinner.adapter = adapter
     }
 

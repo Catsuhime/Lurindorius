@@ -21,8 +21,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:textColor="@color/black"
-            android:textColorHint="#c0c0c0"
-            android:background="@color/gray"/>
+            android:textColorHint="#c0c0c0"/>
 
         <!-- Title Filter -->
         <EditText

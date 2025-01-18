@@ -17,6 +17,15 @@
         android:textColorHint="#c0c0c0"/>
 
     <TextView
+        android:id="@+id/documentNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Document Name"
+        android:textColor="@color/black"
+        android:textColorHint="#c0c0c0"/>
+
+
+    <TextView
         android:id="@+id/uploadDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
