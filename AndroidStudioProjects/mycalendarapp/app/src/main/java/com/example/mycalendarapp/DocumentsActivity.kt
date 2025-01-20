@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import android.Manifest
+import androidx.core.content.FileProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
@@ -467,14 +468,44 @@ class DocumentsActivity : AppCompatActivity() {
 
     private fun downloadDocument(document: Document) {
         val storageRef = FirebaseStorage.getInstance().reference.child(document.path)
-        storageRef.getFile(File(Environment.getExternalStorageDirectory(), document.id))
+
+        val downloadsDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val localFile = File(downloadsDir, "${document.name}.pdf")
+
+        Log.d("DownloadDocument", "Attempting to download to: ${localFile.absolutePath}")
+
+        // Start the file download
+        storageRef.getFile(localFile)
             .addOnSuccessListener {
-                Toast.makeText(this, "Document downloaded successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "File downloaded successfully: ${localFile.absolutePath}", Toast.LENGTH_LONG).show()
+
+                openDownloadedFile(localFile)
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to download document", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { exception ->
+                Log.e("DownloadDocument", "Failed to download file: ${exception.message}")
+                Toast.makeText(this, "Download failed: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun openDownloadedFile(file: File) {
+        val uri = FileProvider.getUriForFile(
+            this,
+            "${applicationContext.packageName}.provider",
+            file
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No application available to open the file.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
 
 

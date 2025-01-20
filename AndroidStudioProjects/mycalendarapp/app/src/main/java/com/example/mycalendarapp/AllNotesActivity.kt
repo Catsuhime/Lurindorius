@@ -204,10 +204,10 @@ class AllNotesActivity : AppCompatActivity() {
             putExtra("title", note.title)
             putExtra("description", note.description)
             putExtra("color", note.color)
-            putExtra("date", note.date)
+            putExtra("date", note.date.date.toString())
             putExtra("company", note.company)
         }
-        startActivity(intent)
+        startActivityForResult(intent, 2)
     }
 
     private fun deleteNote(note: Note) {
@@ -221,5 +221,4 @@ class AllNotesActivity : AppCompatActivity() {
             // Handle deletion error
         }
     }
-
 }
