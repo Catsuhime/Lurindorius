@@ -181,12 +181,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadNotesFromFirebaseStorage() {
         val storageRef = FirebaseStorage.getInstance().reference.child("notes")
-
-        // Clear previous notes and data
-        notes.clear()
-        noteDays.clear()
-        calendarDayDecorators.clear()
-
         storageRef.listAll().addOnSuccessListener { listResult ->
             val tasks = listResult.items.map { item ->
                 item.getBytes(Long.MAX_VALUE).addOnSuccessListener { data ->
@@ -194,27 +188,21 @@ class MainActivity : AppCompatActivity() {
                     val note = convertJsonToNote(noteJson)
                     val noteDay = note.date
 
-                    notes.add(note)
+                    noteDays[noteDay]?.removeIf { it.id == note.id }
                     if (!noteDays.containsKey(noteDay)) {
                         noteDays[noteDay] = ArrayList()
                     }
                     noteDays[noteDay]?.add(note)
                     calendarDayDecorators.add(noteDay)
-                }.addOnFailureListener { e ->
-                    Log.e("FirebaseStorage", "Error fetching note", e)
                 }
             }
 
             Tasks.whenAllComplete(tasks).addOnCompleteListener {
-                notesAdapter.updateNotes(notes) // Update adapter with the new notes list
+                notesAdapter.updateNotes(notes) // Update adapter
                 updateCalendarWithNotes()
             }
-        }.addOnFailureListener { e ->
-            Log.e("FirebaseStorage", "Error listing notes", e)
         }
     }
-
-
 
     private fun convertJsonToNote(json: String): Note {
         val gson = Gson()
@@ -230,40 +218,43 @@ class MainActivity : AppCompatActivity() {
     private fun addNoteToCalendar(note: Note) {
         val date = note.date
 
+        // Ensure no duplicate notes for the same date and ID
         noteDays[date]?.removeIf { it.id == note.id }
         if (!noteDays.containsKey(date)) {
             noteDays[date] = ArrayList()
         }
         noteDays[date]?.add(note)
+
         calendarDayDecorators.add(date)
 
-        notesAdapter.notifyItemInserted(notes.size - 1)
+        // Notify adapter and refresh data
         updateCalendarWithNotes()
         loadNotesForDate(date)
     }
 
-    private fun updateEditedNoteInCalendar(note: Note) {
-        notes.removeIf { it.id == note.id }
-        noteDays[note.date]?.removeIf { it.id == note.id }
 
-        notes.add(note)
+    private fun updateEditedNoteInCalendar(note: Note) {
+        noteDays[note.date]?.removeIf { it.id == note.id }
         if (!noteDays.containsKey(note.date)) {
             noteDays[note.date] = ArrayList()
         }
         noteDays[note.date]?.add(note)
 
+        // Update the main list and notify adapter
+        notes.clear()
+        notes.addAll(noteDays[note.date] ?: emptyList())
         notesAdapter.notifyDataSetChanged()
     }
+
 
     private fun updateCalendarWithNotes() {
         calendarView.removeDecorators()
         if (calendarDayDecorators.isNotEmpty()) {
             calendarView.addDecorator(DotDecorator(calendarDayDecorators))
-        } else {
-            Log.d("UpdateCalendar", "No decorators to add")
         }
         calendarView.invalidate()
     }
+
 
     private fun editNote(note: Note) {
         val intent = Intent(this, AddNoteActivity::class.java).apply {
