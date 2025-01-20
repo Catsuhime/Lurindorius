@@ -331,34 +331,60 @@ class DocumentsActivity : AppCompatActivity() {
     }
 
     private fun fetchCompanyNames() {
-        val storageRef = FirebaseStorage.getInstance().reference.child("notes")
-        storageRef.listAll().addOnSuccessListener { listResult ->
-            val companies = mutableSetOf<String>()
+        val companySet = mutableSetOf<String>()
+
+        // Fetch company names from notes
+        val notesStorageRef = FirebaseStorage.getInstance().reference.child("notes")
+        val notesTasks = notesStorageRef.listAll().addOnSuccessListener { listResult ->
             val tasks = listResult.items.map { item ->
                 item.getBytes(Long.MAX_VALUE).addOnSuccessListener { data ->
                     val noteJson = String(data)
                     val note = Gson().fromJson(noteJson, Note::class.java)
                     if (note.company.isNotEmpty()) {
-                        companies.add(note.company)
+                        companySet.add(note.company)
                     }
-                }.addOnFailureListener { e ->
-                    Log.e("FirebaseStorage", "Error fetching note", e)
                 }
             }
-            tasks.forEach { task -> task.addOnCompleteListener { updateCompanySpinner(companies) } }
+            Tasks.whenAll(tasks).addOnCompleteListener {
+                updateCompanySpinner(companySet)
+            }
+        }
+
+        // Fetch company names from documents
+        val documentsStorageRef = FirebaseStorage.getInstance().reference.child("documents_metadata")
+        val documentsTasks = documentsStorageRef.listAll().addOnSuccessListener { listResult ->
+            val tasks = listResult.items.map { item ->
+                item.getBytes(Long.MAX_VALUE).addOnSuccessListener { data ->
+                    val documentJson = String(data)
+                    val document = Gson().fromJson(documentJson, Document::class.java)
+                    if (document.company.isNotEmpty()) {
+                        companySet.add(document.company)
+                    }
+                }
+            }
+            Tasks.whenAll(tasks).addOnCompleteListener {
+                updateCompanySpinner(companySet)
+            }
+        }
+
+        // Wait for both notes and documents tasks to complete
+        Tasks.whenAll(notesTasks, documentsTasks).addOnCompleteListener {
+            updateCompanySpinner(companySet)
         }
     }
+
 
     private fun updateCompanySpinner(companies: Set<String>) {
         companyNames.clear()
         companyNames.add("All Companies")
-        companyNames.addAll(companies)
+        companyNames.addAll(companies.sorted())
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, companyNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         companyFilterSpinner.adapter = adapter
     }
+
 
     private fun loadDocumentsFromFirebaseStorage() {
         if (isLoading) return // Prevent further loading if already loading
